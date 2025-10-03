@@ -1,0 +1,27 @@
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+.cart-table th, .cart-table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-table th {
+    background-color: #f0f0f0;
+}
+
+.cart-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.cart-actions button {
+    background-color: #dc3545;
+}
+
+.cart-actions button:hover {
+    background-color: #a71d2a;
+}

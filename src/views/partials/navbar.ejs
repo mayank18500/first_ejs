@@ -1,0 +1,18 @@
+<header class="bg-white shadow-md">
+  <div class="container mx-auto flex justify-between items-center py-4">
+    <a href="/" class="text-2xl font-bold text-blue-600">ECOM</a>
+    <nav>
+      <ul class="flex space-x-6 items-center">
+        <li><a href="/products" class="hover:text-blue-800">Products</a></li>
+        <li><a href="/cart" class="hover:text-blue-800">Cart</a></li>
+        <% if(!user) { %>
+          <li><a href="/auth/login" class="hover:text-blue-800">Login</a></li>
+          <li><a href="/auth/register" class="hover:text-blue-800">Register</a></li>
+        <% } else { %>
+          <li><span>Hello, <%= user.name %></span></li>
+          <li><a href="/auth/logout" class="hover:text-red-600">Logout</a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</header>

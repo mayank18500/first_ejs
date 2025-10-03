@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Your Orders</h1>
+
+  <% if(orders.length === 0) { %>
+    <p>You have not placed any orders yet.</p>
+  <% } else { %>
+    <table>
+      <tr>
+        <th>Order ID</th>
+        <th>Total Amount</th>
+        <th>Status</th>
+        <th>Placed On</th>
+      </tr>
+      <% orders.forEach(order => { %>
+        <tr>
+          <td><%= order.order_id %></td>
+          <td>$<%= order.total_amount %></td>
+          <td><%= order.status %></td>
+          <td><%= order.created_at.toDateString() %></td>
+        </tr>
+      <% }) %>
+    </table>
+  <% } %>
+
+  <a href="/products">Continue Shopping</a>
+</body>
+</html>
