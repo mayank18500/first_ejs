@@ -1,15 +1,35 @@
 <%- include('../partials/navbar') %>
 
-<div class="container mx-auto my-8">
-  <h1 class="text-3xl font-bold mb-6">Products</h1>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<div class="container mx-auto my-10">
+  <h1 class="text-4xl font-bold mb-8 text-gray-800">Latest Products</h1>
+  
+  <% if (success_msg && success_msg.length > 0) { %>
+    <div class="flash-success flash-message"><%= success_msg %></div>
+  <% } %>
+  <% if (error_msg && error_msg.length > 0) { %>
+    <div class="flash-error flash-message"><%= error_msg %></div>
+  <% } %>
+  
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    <% if (products.length === 0) { %>
+        <p class="text-gray-600 col-span-full">No products are available right now. Please check back later.</p>
+    <% } %>
+    
     <% products.forEach(product => { %>
-      <div class="bg-white shadow-md rounded-lg p-4 flex flex-col">
-        <img src="<%= product.image || '/images/default.png' %>" alt="<%= product.name %>" class="h-48 w-full object-cover rounded-md mb-4">
-        <h2 class="font-semibold text-lg mb-2"><%= product.name %></h2>
-        <p class="text-gray-600 mb-2"><%= product.description.slice(0, 50) %>...</p>
-        <span class="font-bold text-blue-600 mb-2">$<%= product.price %></span>
-        <a href="/products/<%= product.product_id %>" class="mt-auto bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-center">View Details</a>
+      <div class="bg-white shadow-xl rounded-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col">
+        <img src="<%= product.image || '/images/default.png' %>" alt="<%= product.name %>" class="h-56 w-full object-cover">
+        
+        <div class="p-4 flex flex-col flex-grow">
+          <h2 class="font-bold text-xl mb-1 text-gray-900"><%= product.name %></h2>
+          <p class="text-gray-500 text-sm mb-3 flex-grow"><%= product.description.slice(0, 70) %>...</p>
+          
+          <div class="flex items-center justify-between mt-auto pt-2">
+            <span class="price-display text-green-600 text-2xl font-bold">$<%= product.price.toFixed(2) %></span>
+            <a href="/products/<%= product.product_id %>" class="bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-blue-700 transition duration-200">
+              View Details
+            </a>
+          </div>
+        </div>
       </div>
     <% }) %>
   </div>

@@ -1,0 +1,18 @@
+<%- include('../partials/navbar') %>
+
+<div class="container mx-auto my-16 text-center">
+  <h1 class="text-5xl font-extrabold text-gray-900 mb-4">Welcome to ECOM!</h1>
+  <p class="text-xl text-gray-600 mb-8">Your one-stop shop for everything you need.</p>
+  
+  <% if (success_msg && success_msg.length > 0) { %>
+    <div class="flash-success mx-auto max-w-lg mb-4 text-left"><%= success_msg %></div>
+  <% } %>
+  <% if (error_msg && error_msg.length > 0) { %>
+    <div class="flash-error mx-auto max-w-lg mb-4 text-left"><%= error_msg %></div>
+  <% } %>
+  <a href="/products" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg text-lg hover:bg-blue-700 transition duration-300 shadow-lg">
+    Start Shopping Now →
+  </a>
+</div>
+
+<%- include('../partials/footer') %>

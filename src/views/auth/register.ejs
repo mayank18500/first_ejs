@@ -4,19 +4,28 @@
   <meta charset="UTF-8">
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-  <h1>Register</h1>
-  <% if (error_msg) { %>
-    <p style="color:red;"><%= error_msg %></p>
-  <% } %>
-  <form action="/auth/register" method="POST">
-    <input type="text" name="name" placeholder="Full Name" required><br>
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <input type="password" name="confirm_password" placeholder="Confirm Password" required><br>
-    <button type="submit">Register</button>
-  </form>
-  <p>Already have an account? <a href="/auth/login">Login</a></p>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-2xl">
+    <h1 class="text-3xl font-bold text-center text-blue-600 mb-6">Create Account</h1>
+    
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="flash-error flash-message"><%= error_msg %></div>
+    <% } %>
+
+    <form action="/auth/register" method="POST" class="space-y-4">
+      <input type="text" name="name" placeholder="Full Name" required class="w-full border border-gray-300 p-3 rounded focus:ring-blue-500 focus:border-blue-500">
+      <input type="email" name="email" placeholder="Email Address" required class="w-full border border-gray-300 p-3 rounded focus:ring-blue-500 focus:border-blue-500">
+      <input type="password" name="password" placeholder="Password" required class="w-full border border-gray-300 p-3 rounded focus:ring-blue-500 focus:border-blue-500">
+      <input type="password" name="confirm_password" placeholder="Confirm Password" required class="w-full border border-gray-300 p-3 rounded focus:ring-blue-500 focus:border-blue-500">
+      <button type="submit" class="w-full btn-primary btn mt-4">Register</button>
+    </form>
+    
+    <p class="text-center text-gray-600 mt-6">
+      Already have an account? 
+      <a href="/auth/login" class="text-blue-600 hover:text-blue-800 font-semibold">Login here</a>
+    </p>
+  </div>
 </body>
 </html>

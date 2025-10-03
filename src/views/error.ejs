@@ -1,0 +1,22 @@
+<%- include('./partials/navbar') %>
+
+<div class="container mx-auto my-20 text-center">
+  <% if (message === 'Page Not Found') { %>
+    <h1 class="text-6xl font-extrabold text-red-600 mb-4">404</h1>
+    <h2 class="text-3xl font-semibold text-gray-800 mb-6">Oops! <%= message %></h2>
+    <p class="text-gray-600 mb-8">The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+  <% } else { %>
+    <h1 class="text-6xl font-extrabold text-red-600 mb-4">500</h1>
+    <h2 class="text-3xl font-semibold text-gray-800 mb-6">Server Error</h2>
+    <p class="text-gray-600 mb-8"><%= message %></p>
+  <% } %>
+  
+  <a href="/" class="bg-blue-600 text-white font-semibold py-2 px-6 rounded hover:bg-blue-700 transition duration-300">
+    Go to Homepage
+  </a>
+  <a href="/products" class="ml-4 border border-blue-600 text-blue-600 font-semibold py-2 px-6 rounded hover:bg-blue-50 transition duration-300">
+    View Products
+  </a>
+</div>
+
+<%- include('./partials/footer') %>

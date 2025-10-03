@@ -17,15 +17,22 @@ exports.getCheckout = async (req, res) => {
     res.render('orders/checkout', { title: 'Checkout', cartItems: result.rows, grandTotal });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    req.flash('error_msg', 'Could not load checkout page.');
+    res.status(500).redirect('/cart');
   }
 };
 
-// Place order
+// Place order - CRITICAL: Using a transaction for atomicity
 exports.placeOrder = async (req, res) => {
   const userId = req.session.user.id;
+  // Get a dedicated client for the transaction
+  const client = await pool.connect(); 
+
   try {
-    const cartItemsResult = await pool.query(`
+    // 1. Start the transaction
+    await client.query('BEGIN'); 
+
+    const cartItemsResult = await client.query(`
       SELECT c.cart_id, c.quantity, p.product_id, p.name, p.price
       FROM cart c
       JOIN products p ON c.product_id = p.product_id
@@ -33,7 +40,9 @@ exports.placeOrder = async (req, res) => {
     `, [userId]);
 
     if (cartItemsResult.rows.length === 0) {
-      req.flash('error_msg', 'Your cart is empty');
+      // Rollback and exit if cart is empty
+      await client.query('ROLLBACK');
+      req.flash('error_msg', 'Your cart is empty. Nothing to order.');
       return res.redirect('/cart');
     }
 
@@ -41,30 +50,38 @@ exports.placeOrder = async (req, res) => {
     let totalAmount = 0;
     cartItemsResult.rows.forEach(item => totalAmount += item.price * item.quantity);
 
-    // Insert into orders
-    const orderResult = await pool.query(
+    // 2. Insert into orders table
+    const orderResult = await client.query(
       'INSERT INTO orders (user_id, total_amount, status) VALUES ($1, $2, $3) RETURNING order_id',
       [userId, totalAmount, 'pending']
     );
 
     const orderId = orderResult.rows[0].order_id;
 
-    // Insert order items
+    // 3. Insert order items
     for (const item of cartItemsResult.rows) {
-      await pool.query(
+      await client.query(
         'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
         [orderId, item.product_id, item.quantity, item.price]
       );
     }
 
-    // Clear user's cart
-    await pool.query('DELETE FROM cart WHERE user_id=$1', [userId]);
+    // 4. Clear user's cart
+    await client.query('DELETE FROM cart WHERE user_id=$1', [userId]);
 
-    req.flash('success_msg', 'Order placed successfully!');
+    // 5. Commit the transaction if all steps succeeded
+    await client.query('COMMIT'); 
+    req.flash('success_msg', `Order #${orderId} placed successfully!`);
     res.redirect('/orders/history');
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    // 6. Rollback the transaction on any error
+    await client.query('ROLLBACK'); 
+    console.error('Transaction Error:', err.message);
+    req.flash('error_msg', 'Order placement failed due to a server error. Please try again.');
+    res.status(500).redirect('/cart');
+  } finally {
+    // 7. Always release the client back to the pool
+    client.release(); 
   }
 };
 
@@ -80,6 +97,7 @@ exports.orderHistory = async (req, res) => {
     res.render('orders/order-history', { title: 'Your Orders', orders: ordersResult.rows });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    req.flash('error_msg', 'Could not retrieve order history.');
+    res.status(500).redirect('/');
   }
 };

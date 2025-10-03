@@ -14,6 +14,7 @@ const pool = new Pool({
 // Test connection
 pool.connect((err, client, release) => {
   if (err) {
+    // Exiting if DB connection fails is a robust approach
     return console.error('Error acquiring client', err.stack);
   }
   console.log('PostgreSQL connected successfully');

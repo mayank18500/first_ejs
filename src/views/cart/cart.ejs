@@ -1,20 +1,27 @@
 <%- include('../partials/navbar') %>
 
 <div class="container mx-auto my-10">
-  <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
+  <h1 class="text-4xl font-bold mb-8 text-gray-800">Your Shopping Cart</h1>
+
+  <% if (success_msg && success_msg.length > 0) { %>
+    <div class="flash-success flash-message"><%= success_msg %></div>
+  <% } %>
+  <% if (error_msg && error_msg.length > 0) { %>
+    <div class="flash-error flash-message"><%= error_msg %></div>
+  <% } %>
 
   <% if(cartItems.length === 0) { %>
-    <p class="text-gray-700">Your cart is empty!</p>
+    <p class="text-gray-700">Your cart is empty! <a href="/products" class="text-blue-600 hover:text-blue-800 font-semibold">Go shopping</a>.</p>
   <% } else { %>
     <div class="overflow-x-auto">
-      <table class="w-full table-auto border-collapse">
+      <table class="cart-table w-full table-auto">
         <thead>
-          <tr class="bg-gray-200">
-            <th class="px-4 py-2">Product</th>
-            <th class="px-4 py-2">Price</th>
-            <th class="px-4 py-2">Quantity</th>
-            <th class="px-4 py-2">Total</th>
-            <th class="px-4 py-2">Action</th>
+          <tr>
+            <th class="px-4 py-3 text-left">Product</th>
+            <th class="px-4 py-3 text-left">Price</th>
+            <th class="px-4 py-3 text-center">Quantity</th>
+            <th class="px-4 py-3 text-left">Total</th>
+            <th class="px-4 py-3 text-left">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -22,26 +29,41 @@
           <% cartItems.forEach(item => { %>
             <% let total = item.price * item.quantity; grandTotal += total; %>
             <tr class="border-b">
-              <td class="px-4 py-2"><%= item.name %></td>
-              <td class="px-4 py-2">$<%= item.price %></td>
-              <td class="px-4 py-2"><%= item.quantity %></td>
-              <td class="px-4 py-2">$<%= total %></td>
-              <td class="px-4 py-2">
+              <td class="px-4 py-4 font-semibold"><%= item.name %></td>
+              <td class="px-4 py-4">$<%= item.price.toFixed(2) %></td>
+              <td class="px-4 py-4 text-center">
+                <form action="/cart/update/<%= item.product_id %>" method="POST" class="inline-flex items-center">
+                  <input 
+                    type="number" 
+                    name="quantity" 
+                    value="<%= item.quantity %>" 
+                    min="1" 
+                    class="border border-gray-300 p-2 w-16 rounded text-center"
+                    onchange="this.form.submit()"
+                  >
+                </form>
+              </td>
+              <td class="px-4 py-4 price-display font-bold">$<%= total.toFixed(2) %></td>
+              <td class="px-4 py-4">
                 <form action="/cart/remove/<%= item.product_id %>" method="POST">
-                  <button class="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700">Remove</button>
+                  <button type="submit" class="btn-secondary btn text-sm py-1 px-3">Remove</button>
                 </form>
               </td>
             </tr>
           <% }) %>
-          <tr>
-            <td colspan="3" class="px-4 py-2 font-bold text-right">Grand Total:</td>
-            <td colspan="2" class="px-4 py-2 font-bold">$<%= grandTotal %></td>
+          <tr class="font-extrabold">
+            <td colspan="3" class="px-4 py-4 text-right border-t-2">Grand Total:</td>
+            <td colspan="2" class="px-4 py-4 price-display text-left border-t-2 text-3xl">$<%= grandTotal.toFixed(2) %></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <a href="/orders/checkout" class="mt-4 inline-block bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700">Proceed to Checkout</a>
+    <div class="flex justify-end mt-8">
+        <a href="/orders/checkout" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-green-700 transition duration-300">
+            Proceed to Checkout
+        </a>
+    </div>
   <% } %>
 </div>
 
